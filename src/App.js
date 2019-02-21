@@ -1,11 +1,14 @@
 import React from 'react';
+import CurrencyConverter from './CurrencyConverter';
 import './app.css';
 
 export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-      </header>
-    </div>
+    <>
+      <header></header>
+      <div className="container">
+        <CurrencyConverter />
+      </div>
+    </>
   );
 }
