@@ -35,22 +35,17 @@ export default function CurrencyConverter() {
     deps: [base, target]
   });
 
-  React.useEffect(() => {
-    setConverted((convertRate.data[key])? convertRate.data[key] * amount : 'calculating ...');
-  }, [convertRate.data]);
+  React.useEffect(
+    () => void setConverted((convertRate.data[key])? convertRate.data[key] * amount : 'calculating ...'),
+    [convertRate.data, amount]
+  );
 
   const handleAmount = (e) => {
-    const amount = parseFloat(e.target.value);
-    if (!isNaN(amount))
-      setAmount(amount);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(key);
-    if(!base || !target || convertRate.loading || convertRate.error)
-      return;
-    setConverted(convertRate.data[key] * amount);
+    const value = e.target.value;
+    if(!value)
+      setAmount('');
+    else if (/^[0-9]*\.?[0-9]*$/.test(value) )
+      setAmount(parseFloat(value));
   };
 
   const renderOptions = Object.keys(currencies.data).map(key => (<option key={key} value={key}>{`${key} - ${currencies.data[key]}`}</option>) );
@@ -60,46 +55,51 @@ export default function CurrencyConverter() {
   else if(currencies.error)
     return <div className="alert alert-danger" role="alert">{currencies.error}</div>
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="form-row flex-center">
-        <div className="flex-b-40 col-sm-3 my-1">
-          <label className="sr-only" htmlFor="amount">Amount</label>
-          <input id="amount" type="text" className="form-control"
-              placeholder="type amount ..."
-              value={amount}
-              onChange={handleAmount} />
+    <div className="card w-75 mx-auto my-3">
+      <div className="card-header alert alert-success text-center">
+        {amount} {currencies.data[base]} is equal to {converted} {currencies.data[target]}
+      </div>
+      <div className="card-body">
+        <div className="flex-center">
+          <div className="mx-2 my-2">
+            <label className="sr-only" htmlFor="amount">Amount</label>
+            <input id="amount" type="text" className="form-control"
+                placeholder="type amount ..."
+                value={amount}
+                onChange={handleAmount} />
+          </div>
+          <div className="mx-2 my-2">
+            <label className="mr-sm-2 sr-only" htmlFor="base">Base Currency</label>
+            <select id="base" className="custom-select mr-sm-2"
+                value={base}
+                onChange={ e => setBase(e.target.value)} >
+              <option value="">Choose base ...</option>
+              { renderOptions }
+            </select>
+          </div>
         </div>
-        <div className="flex-b-40 col-sm-3 my-1">
-          <label className="mr-sm-2 sr-only" htmlFor="base">Base Currency</label>
-          <select id="base" className="custom-select mr-sm-2"
-              value={base}
-              onChange={ e => setBase(e.target.value)} >
-            <option value="">Choose base ...</option>
-            { renderOptions }
-          </select>
+        <div className="flex-center">
+          <div className="mx-2 my-2">
+            <label className="sr-only" htmlFor="result">Result</label>
+            <input type="text" id="result" className="form-control"
+                placeholder="result ..."
+                value={converted}
+                readOnly={true} />
+          </div>
+          <div className="mx-2 my-2">
+            <label className="mr-sm-2 sr-only" htmlFor="target">Target Currency</label>
+            <select id="target" className="custom-select mr-sm-2"
+                value={target}
+                onChange={ e => setTarget(e.target.value)} >
+              <option value="">Choose target ...</option>
+              { renderOptions }
+            </select>
+          </div>
         </div>
       </div>
-      <div className="form-row flex-center">
-        <div className="flex-b-40 col-sm-3 my-1">
-          <label className="sr-only" htmlFor="result">Result</label>
-          <input type="text" id="result" className="form-control"
-              placeholder="result ..."
-              value={converted}
-              readOnly={true} />
-        </div>
-        <div className="flex-b-40 col-sm-3 my-1">
-          <label className="mr-sm-2 sr-only" htmlFor="target">Target Currency</label>
-          <select id="target" className="custom-select mr-sm-2"
-              value={target}
-              onChange={ e => setTarget(e.target.value)} >
-            <option value="">Choose target ...</option>
-            { renderOptions }
-          </select>
-        </div>
+      <div className="card-footer text-center text-light bg-secondary">
+        Date: { (new Date()).toLocaleString('en-gb') }
       </div>
-      <div className="form-row flex-center">
-        <button className="flex-b-50 btn btn-primary">Convert</button>
-      </div>
-    </form>
+    </div>
   )
 }

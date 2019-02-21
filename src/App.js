@@ -5,7 +5,11 @@ import './app.css';
 export default function App() {
   return (
     <>
-      <header></header>
+      <header>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a className="navbar-brand" href="#!">Currency Converter</a>
+        </nav>
+      </header>
       <div className="container">
         <CurrencyConverter />
       </div>

@@ -94,3 +94,7 @@
   padding: 3rem;
 }
 /* #endregion */
+
+.card-header.alert {
+  margin-bottom: 0;
+}
